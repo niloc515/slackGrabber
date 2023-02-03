@@ -62,14 +62,6 @@ class SlackGrabber(GridLayout):
 
 
 class SlackGrabberApp(App):
-    # def on_validate_input(self, widget):
-    #     self.on_key_add_click()
-    #
-    # def on_key_add_click(self):
-    #     print('click add key')
-    #     input_text = self.root.ids.key_input_text.text
-    #     message, status = oath_exists(input_text)
-    #     # self.info_text += '\nButton Clicked'
     pass
 
 
