@@ -26,13 +26,6 @@ def oath_exists(token: str) -> (str, bool):
         return 'Valid token', True
 
 
-def message_text(text: str) -> str:
-    """
-    Returns a string with a leading new line for proper formatting
-    """
-    return '\n' + text
-
-
 class SlackGrabber(GridLayout):
     info_text = StringProperty('Program Started')
     api_key = StringProperty('')
@@ -53,13 +46,26 @@ class SlackGrabber(GridLayout):
         """
         input_text = self.ids.key_input_text.text
         message, status = oath_exists(input_text)
-        self.info_text += message_text('Button Clicked')
-        self.info_text += message_text(message)
+        self.new_message('Button Clicked')
+        self.new_message(message)
         self.ids.get_files_button.disabled = not status
 
     def on_get_files_click(self):
-        self.info_text += message_text('Get Files Pressed')
+        """
+        Initiates the fetching of all the files.
+        - function must get the ids for the conversations using chanel names
+        - Join the chanels
+            - note that the bot may already have joined channels in the past, revist this later
+        - Download the files from each channel and place it in an appropriate file
+        """
+        self.new_message('Get Files Pressed')
 
+    def new_message(self, text):
+        """
+        Formats and adds a message to the messages scroll field
+        TODO: prepend the message with the time the message was added
+        """
+        self.info_text += '\n' + text
 
 class SlackGrabberApp(App):
     pass
