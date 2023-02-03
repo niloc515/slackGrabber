@@ -1,0 +1,91 @@
+SlackGrabber:
+
+<SlackGrabber@GridLayout>:
+    cols: 1
+    size_hint: 0.6, 1
+    pos_hint: {'center_x': 0.5, 'center_y':0.5}
+    Title:
+        text: 'SlackGrabber'
+    SubTitle:
+        text: 'Input API Key:'
+    GridLayout
+        cols: 2
+        size_hint: 1, None
+        height: '42dp'
+        TextInput:
+            id: key_input_text
+            text: 'xoxb-...-...-...'
+            multiline: False
+            on_text_validate: root.on_validate_input(self)
+        Button:
+            text: 'Add Key'
+            size_hint: 0.1, 1
+            on_press: root.on_key_add_click()
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+    SubTitle:
+        text: 'Add channels:'
+    Label:
+        text: 'Separate the channel names with a comma and space'
+        size_hint: 1, None
+        height: '24dp'
+    GridLayout
+        cols: 1
+        size_hint: 1, None
+        height: '84dp'
+        TextInput:
+            height: '32dp'
+            id: channels_input_text
+            text: 'general'
+            multiline: False
+            on_text_validate: root.on_validate_input(self)
+        Button:
+            id: get_files_button
+            height: '32dp'
+            text: 'Get Files'
+            on_press: root.on_get_files_click()
+            disabled: True
+    SubTitle:
+        text: 'Monitoring'
+    ScrollView:
+        size_hint: 1, 0.25
+        do_scroll_x: False
+        do_scroll_y: True
+        Label:
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            text: root.info_text
+    ScrollView:
+        size_hint: 1, 0.25
+        do_scroll_x: False
+        do_scroll_y: True
+        FileList:
+            fileListItem:
+            fileListItem:
+
+<FileList@StackLayout>
+    id: file_list
+
+<FileListItem@GridLayout>
+    cols: 3
+    Image:
+    Label:
+        text: 'testing'
+    Button:
+        text: 'Find File'
+
+
+<Title@Label>
+    size_hint: 1, None
+    height: '64dp'
+    font_size: '48dp'
+
+<SubTitle@Label>
+    size_hint: 1, None
+    height: '48dp'
+    font_size: '24dp'
+
+
+
