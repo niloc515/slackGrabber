@@ -7,7 +7,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-import SlackWorker
+from SlackWorker import SlackWorker
 
 
 def oath_exists(token: str) -> (str, bool):
@@ -29,6 +29,7 @@ class SlackGrabber(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.worker = None
 
     def on_validate_input(self, widget):
         """
@@ -43,6 +44,9 @@ class SlackGrabber(GridLayout):
         """
         input_text = self.ids.key_input_text.text
         message, status = oath_exists(input_text)
+        if status:
+            self.api_key = input_text
+            self.worker = SlackWorker(self.api_key)
         self.new_message('Button Clicked')
         self.new_message(message)
         self.ids.get_files_button.disabled = not status
@@ -56,6 +60,13 @@ class SlackGrabber(GridLayout):
         - Download the files from each channel and place it in an appropriate file
         """
         self.new_message('Get Files Pressed')
+        channels_str = self.ids.channels_input_text.text
+        joined_channels, unjoined_channels, message = self.worker.join_channels(channels_str.split(', '))
+        if len(unjoined_channels) > 0:
+            self.new_message(message)
+        else:
+            self.new_message('All channels joined')
+        self.worker.download_files_from_channels(joined_channels)
 
     def new_message(self, text):
         """
