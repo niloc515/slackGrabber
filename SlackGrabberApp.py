@@ -7,17 +7,14 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-import requests
-import os
-import time
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+import SlackWorker
 
 
 def oath_exists(token: str) -> (str, bool):
     """
     Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
     All Slack tokens begin with 'xoxb'
+    TODO: Maybe move to SlackWorker
     TODO: add further validation on inside text segments to check for alpha numerics
     """
     if not (token and token.split('-')[0] == 'xoxb'):
@@ -66,6 +63,7 @@ class SlackGrabber(GridLayout):
         TODO: prepend the message with the time the message was added
         """
         self.info_text += '\n' + text
+
 
 class SlackGrabberApp(App):
     pass
