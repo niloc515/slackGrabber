@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import time
 from dateutil.relativedelta import relativedelta
+from kivy.logger import Logger
 
 
 def make_directory(dir_name: str):
@@ -34,7 +35,7 @@ class SlackWorker:
         """
         res = self.slack_request(self.CONVERSATIONS_LIST_URL)
 
-        if res['ok'] == True:
+        if res['ok']:
             relevant_channels = list(filter(lambda channel: (channel['name'] in channels), res['channels']))
             if relevant_channels:
                 return relevant_channels
@@ -57,7 +58,7 @@ class SlackWorker:
 
         for channel in channels_info:
             res = self.slack_request(self.CONVERSATIONS_JOIN_URL + channel['id'])
-            if res['ok'] == True:
+            if res['ok']:
                 joined_channels.append(channel)
             else:
                 unjoined_channels.append(channel)
@@ -82,17 +83,17 @@ class SlackWorker:
         r = requests.get(file['url_private'], headers=api_call_headers)
 
         open(file['title'], 'wb').write(r.content)
-        modTime = time.mktime(time_file_created.timetuple())
-        os.utime(current_folder + '/' + file['title'], (modTime, modTime))
+        mod_time = time.mktime(time_file_created.timetuple())
+        os.utime(current_folder + '/' + file['title'], (mod_time, mod_time))
 
-    def download_files_from_channels(self, joined_channels: list, months=1):
+    def download_files_from_channels(self, joined_channels: list, start_folder, months=1):
         """
         Downloads all the files from a given list of channels in the past number of months
         TODO: start grabbing files from the time of the most recently downloaded file
         """
         current_time = datetime.now().strftime('%Y-%m-%d')
         download_from_ts = (datetime.now() - relativedelta(months=months)).timestamp()
-        root_folder = make_directory('Slack_' + current_time)
+        root_folder = make_directory(start_folder + 'Slack_' + current_time)
 
         for channel in joined_channels:
             make_directory(channel['name'] + '_' + current_time)
@@ -103,7 +104,7 @@ class SlackWorker:
                     f'{self.FILES_LIST_URL}?page={next_page}&channel={channel["id"]}&ts_from={str(download_from_ts)}')
                 for file in res['files']:
                     self.download_file(file, current_folder)
-                if(next_page <= res['paging']['pages']):
+                if next_page <= res['paging']['pages']:
                     break
                 else:
                     next_page += 1
