@@ -1,0 +1,20 @@
+[
+  {
+    "type": "title",
+    "title": "Key and other Important settings"
+  },
+  {
+    "type": "string",
+    "title": "API Key",
+    "desc": "The key used to fetch from a slack server",
+    "section": "Slack Channel Info",
+    "key": "api_key"
+  },
+  {
+    "type": "string",
+    "title": "Date of Last Fetch",
+    "desc": "The last time a successful fetch was made from the workspace on this key",
+    "section": "Slack Channel Info",
+    "key": "last_fetch"
+  }
+]
