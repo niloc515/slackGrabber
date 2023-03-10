@@ -1,10 +1,13 @@
+from SlackWorker import SlackWorker
+
 from kivy.app import App
 from kivy.properties import StringProperty
+from kivy.properties import ObjectProperty
 from kivy.uix.gridlayout import GridLayout
-from SlackWorker import SlackWorker
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
-from kivy.properties import ObjectProperty
+from kivy.uix.settings import SettingsWithSidebar
+from kivy.config import Config
 
 
 def oath_exists(token: str) -> (str, bool):
@@ -33,10 +36,12 @@ class SlackGrabber(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._popup = None
         self.worker = None
 
     def dismiss_popup(self):
         self._popup.dismiss()
+
     def save(self, path, filename):
         self.file_path = path + '/' + filename
         channels_str = self.ids.channels_input_text.text
@@ -49,6 +54,7 @@ class SlackGrabber(GridLayout):
         self.worker.download_files_from_channels(joined_channels, self.file_path)
         self.new_message('save button pushed')
         self.dismiss_popup()
+
     def show_save(self):
         content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
         self._popup = Popup(title="Select folder to save files to", content=content,
@@ -71,6 +77,7 @@ class SlackGrabber(GridLayout):
         if status:
             self.api_key = input_text
             self.worker = SlackWorker(self.api_key)
+            Config.set("Slack Channel Info", "api_key", input_text)
         self.new_message('Button Clicked')
         self.new_message(message)
         self.ids.get_files_button.disabled = not status
@@ -91,7 +98,26 @@ class SlackGrabber(GridLayout):
 
 
 class SlackGrabberApp(App):
-    pass
+
+    def build(self):
+        """
+        Read in the settings a build the application.
+        """
+        self.settings_cis = SettingsWithSidebar
+        Config.read('slackgrabber.ini')
+
+        return SlackGrabber()
+
+    def build_settings(self, settings):
+        """
+        Construct the file
+        """
+        with open('./settings.json', 'r') as file:
+            json_settings = file.read()
+        settings.add_json_panel("Settings", Config, data=json_settings)
+
+    def on_stop(self):
+        Config.write()
 
 
 if __name__ == "__main__":
