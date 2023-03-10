@@ -36,6 +36,8 @@ class SlackGrabber(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        Config.read('slackgrabber.ini')
+        self.api_key = Config.get('Slack Channel Info', 'api_key', fallback='xoxb-...-...-...')
         self._popup = None
         self.worker = None
 
@@ -57,7 +59,7 @@ class SlackGrabber(GridLayout):
 
     def show_save(self):
         content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Select folder to save files to", content=content,
+        self._popup = Popup(title='Select folder to save files to', content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
@@ -77,7 +79,7 @@ class SlackGrabber(GridLayout):
         if status:
             self.api_key = input_text
             self.worker = SlackWorker(self.api_key)
-            Config.set("Slack Channel Info", "api_key", input_text)
+            Config.set('Slack Channel Info', 'api_key', input_text)
         self.new_message('Button Clicked')
         self.new_message(message)
         self.ids.get_files_button.disabled = not status
@@ -104,8 +106,6 @@ class SlackGrabberApp(App):
         Read in the settings a build the application.
         """
         self.settings_cis = SettingsWithSidebar
-        Config.read('slackgrabber.ini')
-
         return SlackGrabber()
 
     def build_settings(self, settings):
@@ -114,11 +114,11 @@ class SlackGrabberApp(App):
         """
         with open('./settings.json', 'r') as file:
             json_settings = file.read()
-        settings.add_json_panel("Settings", Config, data=json_settings)
+        settings.add_json_panel('Settings', Config, data=json_settings)
 
     def on_stop(self):
         Config.write()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     SlackGrabberApp().run()
