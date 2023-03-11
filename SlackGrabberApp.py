@@ -33,11 +33,13 @@ class SlackGrabber(GridLayout):
     info_text = StringProperty('Program Started')
     api_key = StringProperty('')
     file_path = StringProperty('')
+    channels = StringProperty('')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Config.read('slackgrabber.ini')
         self.api_key = Config.get('Slack Channel Info', 'api_key', fallback='xoxb-...-...-...')
+        self.channels = Config.get('Slack Channel Info', 'channels')
         self._popup = None
         self.worker = None
 
@@ -47,6 +49,7 @@ class SlackGrabber(GridLayout):
     def save(self, path, filename):
         self.file_path = path + '/' + filename
         channels_str = self.ids.channels_input_text.text
+        Config.set('Slack Channel Info', 'channels', channels_str)
         joined_channels, unjoined_channels, message = self.worker.join_channels(channels_str.split(', '))
         if len(unjoined_channels) > 0:
             self.new_message(message)

@@ -12,6 +12,13 @@
   },
   {
     "type": "string",
+    "title": "Channels",
+    "desc": "Channels to fetch from",
+    "section": "Slack Channel Info",
+    "key": "channels"
+  },
+  {
+    "type": "string",
     "title": "Date of Last Fetch",
     "desc": "The last time a successful fetch was made from the workspace on this key",
     "section": "Slack Channel Info",
