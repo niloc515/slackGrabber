@@ -14,7 +14,7 @@ SlackGrabber:
         height: '42dp'
         TextInput:
             id: key_input_text
-            text: 'xoxb-...-...-...'
+            text: root.api_key
             multiline: False
             on_text_validate: root.on_validate_input(self)
         Button:
@@ -37,7 +37,7 @@ SlackGrabber:
         TextInput:
             height: '32dp'
             id: channels_input_text
-            text: 'general'
+            text: root.channels
             multiline: False
             on_text_validate: root.on_validate_input(self)
         Button:
