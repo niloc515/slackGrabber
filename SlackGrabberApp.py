@@ -8,6 +8,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 from kivy.uix.settings import SettingsWithSidebar
 from kivy.config import Config
+from kivy.storage.jsonstore import JsonStore
 
 
 def oath_exists(token: str) -> (str, bool):
@@ -37,9 +38,17 @@ class SlackGrabber(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Config.read('slackgrabber.ini')
-        self.api_key = Config.get('Slack Channel Info', 'api_key', fallback='xoxb-...-...-...')
-        self.channels = Config.get('Slack Channel Info', 'channels')
+        self.store = JsonStore(App.get_running_app().user_data_dir + '/app_data.json')
+        if 'app_info' in self.store:
+            self.api_key = self.store['app_info']['api_key']
+            self.channels = self.store['app_info']['channels']
+        else:
+            # set some default values for the app on first run
+            self.store['app_info'] = {
+                'api_key': 'xoxb-...-...-...',
+                'channels': 'general',
+                'last_fetch': 1375336800.0
+            }
         self._popup = None
         self.worker = None
 
@@ -49,7 +58,9 @@ class SlackGrabber(GridLayout):
     def save(self, path, filename):
         self.file_path = path + '/' + filename
         channels_str = self.ids.channels_input_text.text
-        Config.set('Slack Channel Info', 'channels', channels_str)
+        info_temp = self.store['app_info']
+        info_temp['channels'] = channels_str
+        self.store['app_info'] = info_temp
         joined_channels, unjoined_channels, message = self.worker.join_channels(channels_str.split(', '))
         if len(unjoined_channels) > 0:
             self.new_message(message)
@@ -82,7 +93,9 @@ class SlackGrabber(GridLayout):
         if status:
             self.api_key = input_text
             self.worker = SlackWorker(self.api_key)
-            Config.set('Slack Channel Info', 'api_key', input_text)
+            info_temp = self.store['app_info']
+            info_temp['api_key'] = input_text
+            self.store['app_info'] = info_temp
         self.new_message('Button Clicked')
         self.new_message(message)
         self.ids.get_files_button.disabled = not status
@@ -115,7 +128,7 @@ class SlackGrabberApp(App):
         """
         Construct the file
         """
-        with open('./settings.json', 'r') as file:
+        with open('settings.json', 'r') as file:
             json_settings = file.read()
         settings.add_json_panel('Settings', Config, data=json_settings)
 
