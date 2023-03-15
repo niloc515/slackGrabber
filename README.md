@@ -10,7 +10,7 @@ This will be accomplished with a python script which will have to be run to fetc
 
 ## Initial Set Up
 
-For this application to work, the application must has access to the oauth token. This can be created by following the guide in the important documentation set up or by following the instructions below.
+For this application to work, the application must have access to the oauth token. This can be created by following the guide in the important documentation set up or by following the instructions below.
 
 Go to the [Slack API page](https://api.slack.com/) and click the 'Create an App' button. Select 'From Scratch'. On the left side bar, under 'Settings', under the 'Basic Information' section, expand the 'Add Features and Functionality' section. Make sure that 'Incoming Webhooks', 'Bots', and 'Permissions' are all selected. 
 
@@ -32,14 +32,6 @@ On the same page, scroll up and copy the token under the header 'OAuth Tokens fo
 MAY HAVE TO ADD SOMETHING ABOUT THE SLACK SIGNING SECRET (see TODO)
 
 Before we leave this website, go back to 'Basic Information' then click on 'Install your app' and make sure your application is installed to the correct workspace and channel.
-
-## TODO
-
-- [x] Fix file tree creation for pulling files from multiple channels
-- [x] Add time stamp to file as the time the file was created
-- [ ] refactor to use up to date standards for slack bots ([Bolt](https://api.slack.com/start/building/bolt-python))
-- [ ] Update instructions on README to match current stage of application development
-- [ ] Improve user interface experience
 
 ## Important Documentation 
 
