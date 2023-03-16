@@ -10,7 +10,7 @@ This will be accomplished with a python script which will have to be run to fetc
 
 ## Initial Set Up
 
-For this application to work, the application must has access to the oauth token. This can be created by following the guide in the important documentation set up or by following the instructions below.
+For this application to work, the application must have access to the oauth token. This can be created by following the guide in the important documentation set up or by following the instructions below.
 
 Go to the [Slack API page](https://api.slack.com/) and click the 'Create an App' button. Select 'From Scratch'. On the left side bar, under 'Settings', under the 'Basic Information' section, expand the 'Add Features and Functionality' section. Make sure that 'Incoming Webhooks', 'Bots', and 'Permissions' are all selected. 
 
@@ -29,17 +29,24 @@ On the left side bar, click 'OAuth and Permissions'. Under the 'Scopes' and 'Bot
 
 On the same page, scroll up and copy the token under the header 'OAuth Tokens for Your Workspace'. Save this for later. 
 
-MAY HAVE TO ADD SOMETHING ABOUT THE SLACK SIGNING SECRET (see TODO)
+MAY HAVE TO ADD SOMETHING ABOUT THE SLACK SIGNING SECRET
 
 Before we leave this website, go back to 'Basic Information' then click on 'Install your app' and make sure your application is installed to the correct workspace and channel.
 
-## TODO
+## Installing SlackGrabber
 
-- [x] Fix file tree creation for pulling files from multiple channels
-- [x] Add time stamp to file as the time the file was created
-- [ ] refactor to use up to date standards for slack bots ([Bolt](https://api.slack.com/start/building/bolt-python))
-- [ ] Update instructions on README to match current stage of application development
-- [ ] Improve user interface experience
+Once you have set up the slack bot and have your API key, you can download the slackgrabber application from the Build
+Release section here on Github.
+
+If you are using a Mac, downloading and running the .dmg file will be the easiest way to install the application. 
+Open the .dmg file and drag the slackgrabber application into the applications folder on your Mac.
+
+For other systems and those having trouble with the .dmg file, download and extract the .zip or .tar bundle. You will
+find the source files that you can use to build the project for your own machine. 
+
+To build the project yourself, follow the official build instructions from the 
+[Kivy website](https://kivy.org/doc/stable/guide/packaging.html). Personally, I recommend using PyInstaller instructions
+when building for MacOS.
 
 ## Important Documentation 
 
