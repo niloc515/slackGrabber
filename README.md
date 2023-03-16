@@ -29,9 +29,24 @@ On the left side bar, click 'OAuth and Permissions'. Under the 'Scopes' and 'Bot
 
 On the same page, scroll up and copy the token under the header 'OAuth Tokens for Your Workspace'. Save this for later. 
 
-MAY HAVE TO ADD SOMETHING ABOUT THE SLACK SIGNING SECRET (see TODO)
+MAY HAVE TO ADD SOMETHING ABOUT THE SLACK SIGNING SECRET
 
 Before we leave this website, go back to 'Basic Information' then click on 'Install your app' and make sure your application is installed to the correct workspace and channel.
+
+## Installing SlackGrabber
+
+Once you have set up the slack bot and have your API key, you can download the slackgrabber application from the Build
+Release section here on Github.
+
+If you are using a Mac, downloading and running the .dmg file will be the easiest way to install the application. 
+Open the .dmg file and drag the slackgrabber application into the applications folder on your Mac.
+
+For other systems and those having trouble with the .dmg file, download and extract the .zip or .tar bundle. You will
+find the source files that you can use to build the project for your own machine. 
+
+To build the project yourself, follow the official build instructions from the 
+[Kivy website](https://kivy.org/doc/stable/guide/packaging.html). Personally, I recommend using PyInstaller instructions
+when building for MacOS.
 
 ## Important Documentation 
 
