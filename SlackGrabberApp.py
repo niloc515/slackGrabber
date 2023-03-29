@@ -1,5 +1,7 @@
 from SlackWorker import SlackWorker
 
+import datetime
+
 from kivy.app import App
 from kivy.properties import StringProperty
 from kivy.properties import ObjectProperty
@@ -9,7 +11,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.settings import SettingsWithSidebar
 from kivy.config import Config
 from kivy.storage.jsonstore import JsonStore
-
+from kivy.logger import Logger, LOG_LEVELS
 
 def oath_exists(token: str) -> (str, bool):
     """
@@ -109,10 +111,15 @@ class SlackGrabber(GridLayout):
 
     def new_message(self, text):
         """
-        Formats and adds a message to the messages scroll field
+        Formats and adds a message to the messages scroll field.
+        Message is also added to the Kivy logs as well.
         TODO: prepend the message with the time the message was added
         """
-        self.info_text += '\n' + text
+        now = datetime.datetime.now()
+        formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        message = f"{formatted_date}: {text}"
+        Logger.info(message)
+        self.info_text += '\n' + message
 
 
 class SlackGrabberApp(App):
