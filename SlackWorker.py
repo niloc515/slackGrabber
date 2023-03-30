@@ -3,7 +3,6 @@ from datetime import datetime
 import os
 import time
 from dateutil.relativedelta import relativedelta
-from kivy.logger import Logger
 
 
 def make_directory(dir_name: str):
@@ -20,6 +19,18 @@ def make_directory(dir_name: str):
     return os.getcwd()
 
 
+def oath_exists(token: str) -> (str, bool):
+    """
+    Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
+    All Slack tokens begin with 'xoxb'
+    TODO: add further validation on inside text segments to check for alpha numerics
+    """
+    if not (token and token.split('-')[0] == 'xoxb'):
+        return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
+    else:
+        return 'Valid token', True
+
+
 class SlackWorker:
     BASE_URL = 'https://slack.com/api/'
     CONVERSATIONS_LIST_URL = BASE_URL + 'conversations.list'
@@ -28,17 +39,6 @@ class SlackWorker:
 
     def __init__(self, token: str):
         self.oauth_token = token
-
-    def oath_exists(token: str) -> (str, bool):
-        """
-        Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
-        All Slack tokens begin with 'xoxb'
-        TODO: add further validation on inside text segments to check for alpha numerics
-        """
-        if not (token and token.split('-')[0] == 'xoxb'):
-            return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
-        else:
-            return 'Valid token', True
 
     def get_conversation_id(self, channels):
         """
@@ -59,7 +59,6 @@ class SlackWorker:
         """
         Joins the channels given to the method
         This is necessary in order to see the information about all the files in a given channel.
-        TODO: change the print statement to output properly
         """
         joined_channels = []
         unjoined_channels = []
@@ -97,7 +96,7 @@ class SlackWorker:
         mod_time = time.mktime(time_file_created.timetuple())
         os.utime(current_folder + '/' + file['title'], (mod_time, mod_time))
 
-    def download_files_from_channels(self, joined_channels: list, start_folder, months=1):
+    def download_files_from_channels(self, joined_channels: list, start_folder, months=1, messanger=None):
         """
         Downloads all the files from a given list of channels in the past number of months
         TODO: start grabbing files from the time of the most recently downloaded file
@@ -114,8 +113,12 @@ class SlackWorker:
                 res = self.slack_request(
                     f'{self.FILES_LIST_URL}?page={next_page}&channel={channel["id"]}&ts_from={str(download_from_ts)}')
                 for file in res['files']:
+                    if messanger:
+                        messanger(f'Downloading file "{file["title"]}"')
                     self.download_file(file, current_folder)
                 if next_page <= res['paging']['pages']:
+                    if messanger:
+                        messanger('Files finished downloading')
                     break
                 else:
                     next_page += 1

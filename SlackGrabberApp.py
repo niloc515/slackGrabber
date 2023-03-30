@@ -1,4 +1,4 @@
-from SlackWorker import SlackWorker
+from SlackWorker import SlackWorker, oath_exists
 
 import datetime
 
@@ -11,7 +11,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.settings import SettingsWithSidebar
 from kivy.config import Config
 from kivy.storage.jsonstore import JsonStore
-from kivy.logger import Logger, LOG_LEVELS
+from kivy.logger import Logger
 
 
 class SaveDialog(FloatLayout):
@@ -55,9 +55,10 @@ class SlackGrabber(GridLayout):
         if len(unjoined_channels) > 0:
             self.new_message(message)
         else:
-            self.new_message('All channels joined')
+            channel_names = ', '.join([joined_channel['name'] for joined_channel in joined_channels])
+            self.new_message(f'Channels {channel_names} joined')
 
-        self.worker.download_files_from_channels(joined_channels, self.file_path)
+        self.worker.download_files_from_channels(joined_channels, self.file_path, messanger=self.new_message)
         self.new_message('save button pushed')
         self.dismiss_popup()
 
@@ -79,7 +80,7 @@ class SlackGrabber(GridLayout):
         the get files button
         """
         input_text = self.ids.key_input_text.text
-        message, status = self.worker.oath_exists(input_text)
+        message, status = oath_exists(input_text)
         if status:
             self.api_key = input_text
             self.worker = SlackWorker(self.api_key)
