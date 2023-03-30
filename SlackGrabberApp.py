@@ -13,18 +13,6 @@ from kivy.config import Config
 from kivy.storage.jsonstore import JsonStore
 from kivy.logger import Logger, LOG_LEVELS
 
-def oath_exists(token: str) -> (str, bool):
-    """
-    Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
-    All Slack tokens begin with 'xoxb'
-    TODO: Maybe move to SlackWorker
-    TODO: add further validation on inside text segments to check for alpha numerics
-    """
-    if not (token and token.split('-')[0] == 'xoxb'):
-        return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
-    else:
-        return 'Valid token', True
-
 
 class SaveDialog(FloatLayout):
     save = ObjectProperty(None)
@@ -91,7 +79,7 @@ class SlackGrabber(GridLayout):
         the get files button
         """
         input_text = self.ids.key_input_text.text
-        message, status = oath_exists(input_text)
+        message, status = self.worker.oath_exists(input_text)
         if status:
             self.api_key = input_text
             self.worker = SlackWorker(self.api_key)

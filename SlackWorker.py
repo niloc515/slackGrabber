@@ -29,6 +29,17 @@ class SlackWorker:
     def __init__(self, token: str):
         self.oauth_token = token
 
+    def oath_exists(token: str) -> (str, bool):
+        """
+        Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
+        All Slack tokens begin with 'xoxb'
+        TODO: add further validation on inside text segments to check for alpha numerics
+        """
+        if not (token and token.split('-')[0] == 'xoxb'):
+            return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
+        else:
+            return 'Valid token', True
+
     def get_conversation_id(self, channels):
         """
         Gets the list of slack channels, returns the lis of channel objects for the relevant channels
