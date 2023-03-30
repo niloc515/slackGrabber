@@ -1,4 +1,6 @@
-from SlackWorker import SlackWorker
+from SlackWorker import SlackWorker, oath_exists
+
+import datetime
 
 from kivy.app import App
 from kivy.properties import StringProperty
@@ -9,19 +11,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.settings import SettingsWithSidebar
 from kivy.config import Config
 from kivy.storage.jsonstore import JsonStore
-
-
-def oath_exists(token: str) -> (str, bool):
-    """
-    Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
-    All Slack tokens begin with 'xoxb'
-    TODO: Maybe move to SlackWorker
-    TODO: add further validation on inside text segments to check for alpha numerics
-    """
-    if not (token and token.split('-')[0] == 'xoxb'):
-        return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
-    else:
-        return 'Valid token', True
+from kivy.logger import Logger
 
 
 class SaveDialog(FloatLayout):
@@ -65,9 +55,10 @@ class SlackGrabber(GridLayout):
         if len(unjoined_channels) > 0:
             self.new_message(message)
         else:
-            self.new_message('All channels joined')
+            channel_names = ', '.join([joined_channel['name'] for joined_channel in joined_channels])
+            self.new_message(f'Channels {channel_names} joined')
 
-        self.worker.download_files_from_channels(joined_channels, self.file_path)
+        self.worker.download_files_from_channels(joined_channels, self.file_path, messanger=self.new_message)
         self.new_message('save button pushed')
         self.dismiss_popup()
 
@@ -109,10 +100,15 @@ class SlackGrabber(GridLayout):
 
     def new_message(self, text):
         """
-        Formats and adds a message to the messages scroll field
+        Formats and adds a message to the messages scroll field.
+        Message is also added to the Kivy logs as well.
         TODO: prepend the message with the time the message was added
         """
-        self.info_text += '\n' + text
+        now = datetime.datetime.now()
+        formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        message = f"{formatted_date}: {text}"
+        Logger.info(message)
+        self.info_text += '\n' + message
 
 
 class SlackGrabberApp(App):
