@@ -23,11 +23,15 @@ def oath_exists(token: str) -> (str, bool):
     """
     Tests to ensure the OAuth token exists and begins with the string 'xoxb'.
     All Slack tokens begin with 'xoxb'
-    TODO: add further validation on inside text segments to check for alpha numerics
     """
-    if not (token and token.split('-')[0] == 'xoxb'):
-        return 'Invalid OAuth token. Please check value of SLACK_OAUTH', False
+    error_text = 'Invalid OAuth token. Please check your input'
+    token_components = token.split('-')
+    if not (token_components[0] == 'xoxb'):
+        return error_text, False
     else:
+        for token in token_components[1:]:
+            if not token.isalnum():
+                return error_text, False
         return 'Valid token', True
 
 
